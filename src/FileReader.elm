@@ -179,7 +179,7 @@ handleFiles =
             reader.readAsDataURL(file);
         } else {
             if (fileObjects.length > 0) {
-                var fileEvent;
+                var filesEvent;
                 try {
                   filesEvent = new CustomEvent("files", { detail: fileObjects });
                 } catch(e) {
