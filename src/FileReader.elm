@@ -158,7 +158,7 @@ onChangeHandler =
 handleFiles : String
 handleFiles =
     """
-    var fileObjects = []
+    var fileObjects = [];
     var index = 0;
     var reader = new FileReader();
     reader.onload = function() {
@@ -174,7 +174,7 @@ handleFiles =
         readOne();
     }
     function readOne() {
-        var file = files[index]
+        var file = files[index];
         if (file) {
             reader.readAsDataURL(file);
         } else {
@@ -187,7 +187,6 @@ handleFiles =
                   filesEvent.initCustomEvent("files", false, false, fileObjects);
                 }
                 event.target.dispatchEvent(filesEvent);
-                console.log(filesEvent);
             }
         }
       }
