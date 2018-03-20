@@ -3,6 +3,7 @@ module Example exposing (..)
 import FileReader
 import Html exposing (Html)
 import Html.Attributes
+import MimeType
 
 
 type alias Model =
@@ -34,7 +35,8 @@ main =
 view : Model -> Html Msg
 view model =
     Html.div []
-        [ Html.input (FileReader.fileInput SingleFile) []
+        [ Html.h2 [] [ Html.text "File reader using DataURL" ]
+        , Html.input (FileReader.fileInput FileReader.DataURL SingleFile) []
         , case model.singleFile of
             Just file ->
                 viewFile file
@@ -42,12 +44,14 @@ view model =
             Nothing ->
                 Html.text ""
         , Html.hr [] []
-        , Html.input (FileReader.filesInput MultipleFiles) []
+        , Html.h2 [] [ Html.text "Files reader using Base64" ]
+        , Html.input (FileReader.filesInput FileReader.Base64 MultipleFiles) []
         , if List.length model.multipleFiles > 0 then
             Html.div [] (List.map viewFile model.multipleFiles)
           else
             Html.text ""
         , Html.hr [] []
+        , Html.h2 [] [ Html.text "Drop zone using Text latin1" ]
         , Html.div
             ([ Html.Attributes.style
                 ([ ( "border", "1px solid" ) ]
@@ -59,7 +63,8 @@ view model =
                 )
              ]
                 ++ FileReader.dropZone
-                    { enterMsg = DropZoneEntered
+                    { dataFormat = FileReader.Text "latin1"
+                    , enterMsg = DropZoneEntered
                     , leaveMsg = DropZoneLeaved
                     , filesMsg = FilesDropped
                     }
@@ -84,8 +89,22 @@ viewFile file =
             , Html.dd [] [ Html.text (toString file.lastModified) ]
             , Html.dt [] [ Html.text "Mime type" ]
             , Html.dd [] [ Html.text file.mimeType ]
-            , Html.dt [] [ Html.text "Image" ]
-            , Html.dd [] [ Html.img [ Html.Attributes.src file.dataURL ] [] ]
+            , Html.dt [] [ Html.text "Data format" ]
+            , Html.dd [] [ Html.text (toString file.dataFormat) ]
+            , Html.dt [] [ Html.text "Data" ]
+            , Html.dd []
+                (case file.data of
+                    Ok data ->
+                        case ( file.dataFormat, MimeType.parseMimeType file.mimeType ) of
+                            ( FileReader.DataURL, Just (MimeType.Image _) ) ->
+                                [ Html.img [ Html.Attributes.src data ] [] ]
+
+                            _ ->
+                                [ Html.text data ]
+
+                    Err error ->
+                        [ Html.text ("Error: " ++ toString error.code ++ " " ++ error.name ++ " " ++ error.message) ]
+                )
             ]
         ]
 
