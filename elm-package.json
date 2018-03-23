@@ -1,5 +1,5 @@
 {
-    "version": "2.0.0",
+    "version": "2.0.1",
     "summary": "API for FileReader, for file input and file drop zones.",
     "repository": "https://github.com/norpan/elm-file-reader.git",
     "license": "BSD3",
